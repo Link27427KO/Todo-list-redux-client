@@ -7,11 +7,13 @@ import {
    REGISTER_REQUEST,
    REGISTER_SUCCESS,
 } from './types/auth'
-import { AuthData } from '../../components/Auth/Login'
+import { AuthData } from '../../pages/Login/Login'
 import AuthService from '../../services/auth.service'
 import { TokenService } from '../../services/token.service'
-import { RegisterData } from '../../components/Auth/Register'
+import { RegisterData } from '../../pages/Register/Register'
 import { clearTodos } from './todo'
+import { Dispatch } from 'redux'
+import { setNotification } from './notification'
 
 export const loginSuccess = (token: string) => {
    TokenService.set(token)
@@ -37,16 +39,21 @@ export const loginRequest = () => {
 export const loginRedirect = () => {}
 
 export const login = (data: AuthData) => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       dispatch(loginRequest())
       try {
          const res = await AuthService.login(data)
-         if (!res) {
-            throw new Error(res.message)
+         if (res == undefined) {
+            dispatch(setNotification('Incorrect data'))
          }
-         dispatch(loginSuccess(res.token))
+         if (res.error) {
+            dispatch(logout())
+            dispatch(setNotification(res.error))
+            throw new Error(res.error)
+         } else if (res.token !== undefined) {
+            dispatch(loginSuccess(res.token))
+         }
       } catch (e) {
-         console.log(e)
          dispatch(loginError(e))
       }
    }
@@ -60,7 +67,7 @@ export const logout = () => {
 }
 
 export const logoutUser = () => {
-   return (dispatch: any) => {
+   return (dispatch: Dispatch) => {
       dispatch(logout())
       dispatch(clearTodos())
    }
@@ -86,18 +93,22 @@ export const registerSuccess = () => {
 }
 
 export const register = (data: RegisterData) => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       dispatch(registerRequest())
       try {
          const res = await AuthService.register(data)
          console.log(res)
-         if (!res) {
-            throw new Error(res.message)
+         if (res === undefined) {
+            dispatch(setNotification('Incorrect data'))
          }
-
-         dispatch(loginSuccess(res.token))
+         if (res.error) {
+            dispatch(logout())
+            dispatch(setNotification(res.error))
+            throw new Error(res.error)
+         } else if (res.token !== undefined) {
+            dispatch(loginSuccess(res.token))
+         }
       } catch (e) {
-         console.log(e)
          dispatch(registerError(e))
          dispatch(loginError(e))
       }

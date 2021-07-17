@@ -1,8 +1,8 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { Login } from '../../components/Auth/Login'
-import { Index } from '../../components/Index/Index'
-import { Register } from '../../components/Auth/Register'
+import { Login } from '../../pages/Login/Login'
+import { Index } from '../../pages/Index/Index'
+import { Register } from '../../pages/Register/Register'
 
 export const useRoutes = (isAuthenticated: Boolean) => {
    if (isAuthenticated) {

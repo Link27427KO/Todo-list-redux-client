@@ -32,6 +32,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace'
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz'
 import useStylesIndex from './styles.index'
+import { ITodo } from '../../redux/reducers/todos'
 
 export interface TodoData {
    title: string
@@ -87,11 +88,11 @@ export const Index = () => {
    const [formValid, setFormValid] = useState(false)
 
    const showTodoData = (
-      title: any,
-      description: any,
-      status: any,
-      completedDate: any,
-      date: any
+      title: string,
+      description: string,
+      status: boolean,
+      completedDate: string,
+      date: string
    ) => {
       setTodoDataOpen(true)
       let Status = status == false ? 'not completed' : 'completed'
@@ -157,11 +158,11 @@ export const Index = () => {
       dispatch(updateSelectedTodo(id, todos, index, todoDataForm))
    }
 
-   const completeTodoRequest = (id: number, todo: any, index: number) => {
+   const completeTodoRequest = (id: number, todo: ITodo, index: number) => {
       dispatch(completeSelectedTodo(id, todos, index, todo))
    }
 
-   const unCompleteTodoRequest = (id: number, todo: any, index: number) => {
+   const unCompleteTodoRequest = (id: number, todo: ITodo, index: number) => {
       dispatch(unCompleteSelectedTodo(id, todos, index, todo))
    }
 

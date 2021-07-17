@@ -14,9 +14,7 @@ class UserService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 }
 

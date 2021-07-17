@@ -5,7 +5,7 @@ export class TokenService {
       return localStorage.getItem(this.keyName)
    }
 
-   static set(token: any) {
+   static set(token: string) {
       localStorage.setItem(this.keyName, token)
    }
 

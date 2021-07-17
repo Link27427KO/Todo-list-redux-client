@@ -8,6 +8,7 @@ import {
 import { IUser } from '../reducers/user'
 import UserService from '../../services/user.service'
 import { CLEAR_TODOS } from './types/todos'
+import { Dispatch } from 'redux'
 
 export const getUserRequest = (user: IUser) => {
    return {
@@ -36,17 +37,15 @@ export const clearUser = () => {
 }
 
 export const getRegisteredUser = () => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       try {
          const res = await UserService.getUser()
-         console.log(res)
-         if (!res) {
-            throw new Error(res.message)
+         if (res.error) {
+            throw new Error(res.error)
          }
-         dispatch(getUserRequest(res))
+         dispatch(getUserRequest(res.data))
          dispatch(getUserSuccess())
       } catch (e) {
-         console.log(e)
          dispatch(userError(e))
       }
    }

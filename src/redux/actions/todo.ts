@@ -8,7 +8,8 @@ import {
    UPDATE_TODO_REQUEST,
 } from './types/todos'
 import { ITodo } from '../reducers/todos'
-import { TodoData } from '../../components/Index/Index'
+import { TodoData } from '../../pages/Index/Index'
+import { Dispatch } from 'redux'
 
 export const getTodosRequest = (todo: ITodo) => {
    return {
@@ -40,7 +41,11 @@ export const deleteUserTodo = (todos: ITodo[], index: number) => {
    }
 }
 
-export const updateUserTodo = (todo: ITodo, todos: ITodo[], index: number) => {
+export const updateUserTodo = (
+   todo: TodoData,
+   todos: ITodo[],
+   index: number
+) => {
    todos[index].title = todo.title
    todos[index].description = todo.description
    return {
@@ -88,100 +93,91 @@ export const getTodosSuccess = () => {
 }
 
 export const getTodo = () => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       try {
          const res = await TodoService.getTodos()
-         if (!res) {
-            throw new Error(res.message)
+         if (res.error) {
+            throw new Error(res.error)
          }
-         dispatch(getTodosRequest(res))
+         dispatch(getTodosRequest(res.data))
          dispatch(getTodosSuccess())
       } catch (e) {}
    }
 }
 
-export const addNewTodo = (data: TodoData, todos: any) => {
-   return async (dispatch: any) => {
+export const addNewTodo = (data: TodoData, todos: ITodo[]) => {
+   return async (dispatch: Dispatch) => {
       try {
          const res = await TodoService.addNewTodo(data)
-         if (!res) {
-            throw new Error(res.message)
+         if (res.error) {
+            throw new Error(res.error)
          }
-         dispatch(addTodoRequest(res, todos))
+         dispatch(addTodoRequest(res.data, todos))
          dispatch(getTodosSuccess())
       } catch (e) {}
    }
 }
 
-export const deleteSelectedTodo = (id: number, todos: any, index: number) => {
-   return async (dispatch: any) => {
+export const deleteSelectedTodo = (
+   id: number,
+   todos: ITodo[],
+   index: number
+) => {
+   return async (dispatch: Dispatch) => {
       try {
          const res = await TodoService.DeleteUserTodo(id)
-         if (!res) {
-            throw new Error(res.message)
+         if (res.error) {
+            throw new Error(res.error)
          }
          dispatch(deleteUserTodo(todos, index))
          dispatch(getTodosSuccess())
-      } catch (e) {
-         console.log(e)
-      }
+      } catch (e) {}
    }
 }
 
 export const updateSelectedTodo = (
    id: number,
-   todos: any,
+   todos: ITodo[],
    index: number,
-   todo: any
+   todoData: TodoData
 ) => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       try {
-         const res = await TodoService.UpdateUserTodo(id, todo)
-         if (!res) {
-            throw new Error(res.message)
-         }
-         dispatch(updateUserTodo(todo, todos, index))
+         await TodoService.UpdateUserTodo(id, todoData)
+         dispatch(updateUserTodo(todoData, todos, index))
          dispatch(getTodosSuccess())
-      } catch (e) {
-         console.log(e)
-      }
+      } catch (e) {}
    }
 }
 
 export const completeSelectedTodo = (
    id: number,
-   todos: any,
+   todos: ITodo[],
    index: number,
-   todo: any
+   todo: ITodo
 ) => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       try {
          await TodoService.CompleteUserTodo(id)
 
          dispatch(completeUserTodo(todo, todos, index))
-         dispatch(getTodosRequest)
          dispatch(getTodosSuccess())
-      } catch (e) {
-         console.log(e)
-      }
+      } catch (e) {}
    }
 }
 
 export const unCompleteSelectedTodo = (
    id: number,
-   todos: any,
+   todos: ITodo[],
    index: number,
-   todo: any
+   todo: ITodo
 ) => {
-   return async (dispatch: any) => {
+   return async (dispatch: Dispatch) => {
       try {
          await TodoService.UnCompleteUserTodo(id)
 
          dispatch(unCompleteUserTodo(todo, todos, index))
-         dispatch(getTodosRequest)
          dispatch(getTodosSuccess())
-      } catch (e) {
-         console.log(e)
-      }
+      } catch (e) {}
    }
 }

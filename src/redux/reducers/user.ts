@@ -10,6 +10,7 @@ export interface IUser {
    name: string
    surname: string
    email: string
+   registerDate: string
 }
 
 interface UserState {

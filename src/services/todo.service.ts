@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { TokenService } from './token.service'
+import { TodoData } from '../pages/Index/Index'
 
 class TodoService {
    private static apiUrl = 'http://localhost:5000/todo'
@@ -14,12 +15,10 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 
-   static addNewTodo(data: any) {
+   static addNewTodo(data: TodoData) {
       return axios
          .post(this.apiUrl, data, {
             headers: {
@@ -29,14 +28,12 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 
-   static DeleteUserTodo(data: any) {
+   static DeleteUserTodo(id: number) {
       return axios
-         .delete(`${this.apiUrl}/${data}`, {
+         .delete(`${this.apiUrl}/${id}`, {
             headers: {
                token: TokenService.get(),
             },
@@ -44,20 +41,16 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 
-   static UpdateUserTodo(id: number, body: any) {
+   static UpdateUserTodo(id: number, body: TodoData) {
       return axios
          .put(`${this.apiUrl}/${id}`, body)
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 
    static CompleteUserTodo(id: number) {
@@ -66,9 +59,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 
    static UnCompleteUserTodo(id: number) {
@@ -77,9 +68,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {
-            console.log(err)
-         })
+         .catch((err) => {})
    }
 }
 
