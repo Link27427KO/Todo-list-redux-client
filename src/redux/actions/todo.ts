@@ -1,8 +1,12 @@
 import TodoService from '../../services/todo.service'
 import {
+   ADD_TODO_LINK,
+   ADD_TODO_LINK_SUCCESS,
    CLEAR_TODOS,
    CREATE_TODO_REQUEST,
    DELETE_TODO_REQUEST,
+   GET_TODO_BY_ID_REQUEST,
+   GET_TODO_BY_ID_SUCCESS,
    GET_TODOS_REQUEST,
    GET_TODOS_SUCCESS,
    UPDATE_TODO_REQUEST,
@@ -89,6 +93,37 @@ export const unCompleteUserTodo = (
 export const getTodosSuccess = () => {
    return {
       type: GET_TODOS_SUCCESS,
+   }
+}
+
+export const addTodoLink = (link: string) => {
+   return {
+      type: ADD_TODO_LINK,
+      payload: link,
+   }
+}
+
+export const addTodoLinkSuccess = (link: string) => {
+   navigator.clipboard
+      .writeText(link)
+      .then(() => {})
+      .catch((err) => {
+         console.log('Something went wrong', err)
+      })
+   return {
+      type: ADD_TODO_LINK_SUCCESS,
+   }
+}
+export const setTodoById = (todo: ITodo) => {
+   return {
+      type: GET_TODO_BY_ID_REQUEST,
+      payload: todo,
+   }
+}
+
+export const successTodoById = () => {
+   return {
+      type: GET_TODO_BY_ID_SUCCESS,
    }
 }
 
@@ -179,5 +214,30 @@ export const unCompleteSelectedTodo = (
          dispatch(unCompleteUserTodo(todo, todos, index))
          dispatch(getTodosSuccess())
       } catch (e) {}
+   }
+}
+
+export const generateTodoLink = (id: number) => {
+   return async (dispatch: Dispatch) => {
+      try {
+         const res = await TodoService.CreateTodoLink(id)
+         console.log(res)
+         dispatch(addTodoLink(res.data))
+         dispatch(addTodoLinkSuccess(res.data))
+      } catch (e) {
+         console.log(e)
+      }
+   }
+}
+
+export const getUserTodoById = (id: string) => {
+   return async (dispatch: Dispatch) => {
+      try {
+         const res = await TodoService.GetTodoById(id)
+         dispatch(setTodoById(res.data))
+         dispatch(successTodoById())
+      } catch (e) {
+         console.log(e)
+      }
    }
 }

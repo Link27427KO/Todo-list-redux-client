@@ -45,8 +45,7 @@ export const login = (data: AuthData) => {
          const res = await AuthService.login(data)
          if (res == undefined) {
             dispatch(setNotification('Incorrect data'))
-         }
-         if (res.error) {
+         } else if (res.error) {
             dispatch(logout())
             dispatch(setNotification(res.error))
             throw new Error(res.error)
@@ -97,7 +96,6 @@ export const register = (data: RegisterData) => {
       dispatch(registerRequest())
       try {
          const res = await AuthService.register(data)
-         console.log(res)
          if (res === undefined) {
             dispatch(setNotification('Incorrect data'))
          }

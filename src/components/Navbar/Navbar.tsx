@@ -27,7 +27,6 @@ export default function Navbar() {
       getUser()
    }, [getUser])
 
-   const isLoading = useSelector((state: RootState) => state.todo.isLoading)
    const user = useSelector((state: RootState) => state.user.user)
 
    const [anchorEl, setAnchorEl] = React.useState(null)
@@ -53,11 +52,9 @@ export default function Navbar() {
          style={{ display: 'flex', justifyContent: 'space-between' }}
       >
          <div style={{ float: 'left', marginLeft: '20px' }}>
-            {!isLoading && (
-               <div style={{ marginTop: '10px' }}>
-                  Hello, {user?.name} {user?.surname}
-               </div>
-            )}
+            <div style={{ marginTop: '10px' }}>
+               Hello, {user?.name} {user?.surname}
+            </div>
          </div>
          <div>
             <div style={{ display: 'flex' }}>

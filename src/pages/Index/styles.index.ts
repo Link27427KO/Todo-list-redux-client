@@ -1,6 +1,10 @@
 import { makeStyles } from '@material-ui/core'
 
 const useStylesIndex = makeStyles((theme) => ({
+   note: {
+      width: '100%',
+      background: 'red',
+   },
    root: {
       minWidth: 275,
    },

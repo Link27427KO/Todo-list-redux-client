@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useRoutes } from '../containers/Routes/Routes'
 import { Container } from '@material-ui/core'
 import { useSelector } from 'react-redux'
@@ -11,13 +11,11 @@ import { Switch } from 'react-router-dom'
 
 const App = () => {
    const token = useSelector((store: RootState) => store.auth.token)
-   const [isAuth, setIsAuth] = useState<boolean>(false)
    const routes = useRoutes(!!token)
 
    useEffect(() => {
       if (token) {
          AuthService.setToken(token)
-         setIsAuth(true)
       }
    }, [token])
 

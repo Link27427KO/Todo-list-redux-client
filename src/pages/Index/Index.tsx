@@ -4,6 +4,7 @@ import {
    addNewTodo,
    completeSelectedTodo,
    deleteSelectedTodo,
+   generateTodoLink,
    getTodo,
    unCompleteSelectedTodo,
    updateSelectedTodo,
@@ -24,6 +25,7 @@ import {
    TableBody,
    CardContent,
    Card,
+   Snackbar,
 } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
@@ -31,8 +33,16 @@ import UpdateIcon from '@material-ui/icons/Update'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace'
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz'
+import FileCopyIcon from '@material-ui/icons/FileCopy'
 import useStylesIndex from './styles.index'
 import { ITodo } from '../../redux/reducers/todos'
+import { useHistory } from 'react-router-dom'
+import { clearNotification } from '../../redux/actions/notification'
+import MuiAlert from '@material-ui/lab/Alert'
+
+function Alert(props: any) {
+   return <MuiAlert elevation={6} variant="filled" {...props} />
+}
 
 export interface TodoData {
    title: string
@@ -42,6 +52,7 @@ export interface TodoData {
 export const Index = () => {
    const classes = useStylesIndex()
    const dispatch = useDispatch()
+   const history = useHistory()
 
    const getTodos = useCallback(() => {
       dispatch(getTodo())
@@ -53,12 +64,14 @@ export const Index = () => {
 
    const isLoading = useSelector((state: RootState) => state.todo.isLoading)
    const todos = useSelector((state: RootState) => state.todo.todos)
+   const link = useSelector((state: RootState) => state.todo.link)
 
    const completedArray = todos.filter((todo) => todo.status == true)
    const noCompletedArray = todos.filter((todo) => todo.status == false)
 
    const [openTodoInputModal, setOpenTodoInputModal] = useState(false)
    const [todoDataOpen, setTodoDataOpen] = useState(false)
+   const [linkOpen, setLinkOpen] = useState(false)
 
    const [modalHeader, setModalHeader] = useState('')
    let [modalType, setModalType] = useState('')
@@ -95,7 +108,7 @@ export const Index = () => {
       date: string
    ) => {
       setTodoDataOpen(true)
-      let Status = status == false ? 'not completed' : 'completed'
+      let Status = !status ? 'not completed' : 'completed'
       let CompletedDate = completedDate == ' ' ? 'no date' : completedDate
       setTodo({
          ...todo,
@@ -118,6 +131,10 @@ export const Index = () => {
          completedDate: '',
          date: '',
       })
+   }
+
+   const closeLink = () => {
+      setLinkOpen(false)
    }
 
    const openInputModal = () => {
@@ -166,25 +183,75 @@ export const Index = () => {
       dispatch(unCompleteSelectedTodo(id, todos, index, todo))
    }
 
+   const generateLink = (id: number) => {
+      dispatch(generateTodoLink(id))
+   }
+   const [open, setOpen] = React.useState(false)
+
+   const noteClose = (event: any, reason: any) => {
+      if (reason === 'clickaway') {
+         return
+      }
+      setOpen(false)
+      dispatch(clearNotification())
+   }
+   function textToClipboard(text: string) {
+      let dummy = document.createElement('textarea')
+      document.body.appendChild(dummy)
+      dummy.value = text
+      dummy.select()
+      document.execCommand('copy')
+      document.body.removeChild(dummy)
+   }
+   useEffect(() => {
+      if (open) {
+         textToClipboard(link)
+      }
+   }, [open])
+
    return (
       <>
+         <div className={classes.note}>
+            <Snackbar open={open} autoHideDuration={2000} onClose={noteClose}>
+               <Alert onClose={noteClose} severity="info">
+                  Copied
+               </Alert>
+            </Snackbar>
+         </div>
          <Card>
             <CardContent>
-               <Button
-                  style={{
-                     marginTop: '10px',
-                     marginLeft: '10px',
-                     background: '#28A745',
-                     color: '#fff',
-                  }}
-                  onClick={() => {
-                     openInputModal()
-                     setModalHeader('Adding new todo')
-                     setModalType('add-todo')
-                  }}
+               <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
                >
-                  + Add new todo
-               </Button>
+                  <Button
+                     style={{
+                        marginTop: '10px',
+                        marginLeft: '10px',
+                        background: '#28A745',
+                        color: '#fff',
+                     }}
+                     onClick={() => {
+                        openInputModal()
+                        setModalHeader('Adding new todo')
+                        setModalType('add-todo')
+                     }}
+                  >
+                     + Add new todo
+                  </Button>
+                  <Button
+                     style={{
+                        marginTop: '10px',
+                        marginLeft: '10px',
+                        background: '#666c75',
+                        color: '#fff',
+                     }}
+                     onClick={() => {
+                        history.push('/chat')
+                     }}
+                  >
+                     Help & Support
+                  </Button>
+               </div>
             </CardContent>
          </Card>
 
@@ -206,6 +273,9 @@ export const Index = () => {
                         </TableCell>
                         <TableCell>
                            <strong>DELETE</strong>
+                        </TableCell>
+                        <TableCell>
+                           <strong>GENERATE LINK</strong>
                         </TableCell>
                      </TableRow>
                   </TableHead>
@@ -282,6 +352,17 @@ export const Index = () => {
                                        >
                                           <HighlightOffIcon />
                                        </Button>
+                                    </TableCell>
+                                    <TableCell>
+                                       <FileCopyIcon
+                                          style={{ cursor: 'pointer' }}
+                                          onClick={() => {
+                                             generateLink(todo.id)
+                                             console.log(todo.id)
+                                             setLinkOpen(true)
+                                             setOpen(true)
+                                          }}
+                                       />
                                     </TableCell>
                                  </TableRow>
                               )
@@ -529,6 +610,32 @@ export const Index = () => {
                   <Button
                      className={classes.closeModalWithTodoData}
                      onClick={closeTodoData}
+                  >
+                     Close
+                  </Button>
+               </div>
+            </Modal>
+         </div>
+
+         <div>
+            <Modal
+               open={linkOpen}
+               onClose={closeLink}
+               aria-labelledby="simple-modal-title"
+               aria-describedby="simple-modal-description"
+            >
+               <div className={classes.paper}>
+                  <div
+                     onClick={() => {
+                        history.push(link)
+                     }}
+                     style={{ wordBreak: 'break-all' }}
+                  >
+                     {link && link}
+                  </div>
+                  <Button
+                     className={classes.closeModalWithTodoData}
+                     onClick={closeLink}
                   >
                      Close
                   </Button>

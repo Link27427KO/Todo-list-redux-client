@@ -15,7 +15,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {})
+         .catch(() => {})
    }
 
    static addNewTodo(data: TodoData) {
@@ -28,7 +28,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {})
+         .catch(() => {})
    }
 
    static DeleteUserTodo(id: number) {
@@ -41,7 +41,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {})
+         .catch(() => {})
    }
 
    static UpdateUserTodo(id: number, body: TodoData) {
@@ -50,7 +50,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {})
+         .catch(() => {})
    }
 
    static CompleteUserTodo(id: number) {
@@ -59,7 +59,7 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {})
+         .catch(() => {})
    }
 
    static UnCompleteUserTodo(id: number) {
@@ -68,7 +68,25 @@ class TodoService {
          .then((res) => {
             return res.data
          })
-         .catch((err) => {})
+         .catch(() => {})
+   }
+
+   static CreateTodoLink(id: number) {
+      return axios
+         .get(`${this.apiUrl}/generate-private-link?id=${id}`)
+         .then((res) => {
+            return res.data
+         })
+         .catch(() => {})
+   }
+
+   static GetTodoById(token: string) {
+      return axios
+         .get(`${this.apiUrl}/get-by-id?id=${token}`)
+         .then((res) => {
+            return res.data
+         })
+         .catch(() => {})
    }
 }
 
